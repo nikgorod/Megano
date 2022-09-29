@@ -41,7 +41,3 @@ class Payment:
     def pay_for_order(self, order_id: int, user_id: int):
         """Метод оплаты"""
         pass
-
-
-class AdminSettings:
-    """Нужна подсказка"""
