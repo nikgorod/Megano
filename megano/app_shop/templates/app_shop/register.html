@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'special_css/style.css' %}">
+</head>
+<body>
+    <header>
+        <ul class="messages list-group">
+            {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }} list-group-item active"{% endif %}> {{ message }} </li>
+            {% endfor %}
+        </ul>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group" style="margin: 0 auto; max-width: 600px; padding-bottom: 30px;">
+                <h1>Регистрация</h1>
+                {{user_form.as_p}}
+                {{user_form_password.as_p}}
+                <button class="btn btn-primary" type="submit">Sign up</button>
+            </div>
+
+        </form>
+    </header>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static 'assets/plg/form/jquery.maskedinput.min.js' %}"></script>
+     <script>
+        $(document).ready(function() {
+        $("#id_tel").mask("+7 (999) 99-99-999");
+      });
+    </script>
+</body>
+</html>
