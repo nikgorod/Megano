@@ -65,11 +65,12 @@
                     <div class="row ControlPanel-rowSplit">
                         {% if request.user.is_authenticated %}
                             <div class="row-block">
-                                <a class="ControlPanel-title" href="#">Профиль</a>
+                                <a class="ControlPanel-title" href="#">Profile/</a>
+                                <a class="ControlPanel-title" href="{% url 'logout' %}">Log out</a>
                             </div>
                         {% else %}
                             <div class="row-block">
-                                <a class="ControlPanel-title" href="{% url 'login' %}">Login/</a>
+                                <a class="ControlPanel-title" href="{% url 'login' %}">Log in/</a>
                                 <a class="ControlPanel-title" href="{% url 'register' %}">Register</a>
                             </div>
                         {% endif %}
