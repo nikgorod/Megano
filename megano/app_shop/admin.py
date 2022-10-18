@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages
+from django.db.utils import ProgrammingError
+
+from .models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, DynamicSiteSettings
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 
@@ -83,4 +85,23 @@ class GoodTagsAdmin(admin.ModelAdmin):
     """Админ модель тегов"""
     model = GoodTags
     list_display = ['name']
+
+
+@admin.register(DynamicSiteSettings)
+class DynamicSiteSettingsAdmin(admin.ModelAdmin):
+
+    def __init__(self, model, admin_site):
+        super().__init__(model, admin_site)
+
+        try:
+            DynamicSiteSettings.load().save()
+
+        except ProgrammingError:
+            pass
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 

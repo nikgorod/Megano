@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import MainPage, register_view, ShopLoginView, ShopLogoutView, ShopPasswordReset, ShopPasswordResetDone, \
-    ShopPasswordResetConfirm, ShopPasswordResetComplete
+    ShopPasswordResetConfirm, ShopPasswordResetComplete, SettingsApiView
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -12,5 +12,6 @@ urlpatterns = [
     path('shop/reset_password/', ShopPasswordReset.as_view(), name='reset_password'),
     path('shop/reset_password/done/', ShopPasswordResetDone.as_view(), name='password_reset_done'),
     path('shop/reset/<uidb64>/<token>/', ShopPasswordResetConfirm.as_view(), name='password_reset_confirm'),
-    path('shop/reset/complete/', ShopPasswordResetComplete.as_view(), name='password_reset_complete')
+    path('shop/reset/complete/', ShopPasswordResetComplete.as_view(), name='password_reset_complete'),
+    path('shop/settings_api/', SettingsApiView.as_view(), name='settings_api')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

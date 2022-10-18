@@ -1,4 +1,5 @@
 {% load static %}
+{% load cache %}
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -17,8 +18,8 @@
 <![endif]-->
 <!--[if gt IE 11]><!--> <html lang="ru"> <!--<![endif]-->
 <head>
-    {% block title %}<title>Base</title>{% endblock %}
-    <meta name="description" content="Описание страницы">
+    {% block title %}<title>{{site_settings.title}}</title>{% endblock %}
+    <meta name="description" content="{{site_settings.meta_content}}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <link href="favicon.ico" rel="shortcut icon">
@@ -92,7 +93,7 @@
             </div>
             <div class="wrap">
               <div class="row Header-rowMain">
-                <div class="row-block Header-logo"><a class="logo" href="#"><img class="logo-image" src="{% static 'assets/img/logo.png' %}" alt="logo.png"/></a>
+                <div class="row-block Header-logo"><a class="logo" href="#"><img class="logo-image" src="{{site_settings.logo.url}}" alt="logo.png"/></a>
                 </div>
                 <nav class="row-block row-block_right Header-menu">
                   <div class="menuModal" id="navigate">
@@ -133,12 +134,14 @@
                       </div>
                     </div>
                     <div class="CategoriesButton-content">
-                       {% for i_category in good_categories %}
-                          <div class="CategoriesButton-link"><a href="#">
-                              <div class="CategoriesButton-icon"><img src="{% static 'assets/img/icons/departments/1.svg' %}" alt="1.svg"/>
-                              </div><span class="CategoriesButton-text">{{i_category.name}}</span></a>
-                          </div>
-                       {% endfor %}
+                       {% cache site_settings.cache_timeout good_categories_list %}
+                           {% for i_category in good_categories %}
+                              <div class="CategoriesButton-link"><a href="#">
+                                  <div class="CategoriesButton-icon"><img src="{% static 'assets/img/icons/departments/1.svg' %}" alt="1.svg"/>
+                                  </div><span class="CategoriesButton-text">{{i_category.name}}</span></a>
+                              </div>
+                           {% endfor %}
+                       {% endcache %}
                     </div>
                   </div>
                 </div>
@@ -165,7 +168,7 @@
           <footer class="Footer">
             <div class="wrap">
               <div class="row Footer-main">
-                <div class="row-block"><a class="logo Footer-logo" href="index.html"><img class="logo-image" src="{% static 'assets/img/logo_footer.png' %}" alt="logo_footer.png"/></a>
+                <div class="row-block"><a class="logo Footer-logo" href="index.html"><img class="logo-image" src="{{site_settings.logo.url}}" alt="logo_footer.png"/></a>
                   <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincid  unt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
                   </p>
                   <ul class="menu menu_img menu_smallImg Footer-menuSoc">
