@@ -161,3 +161,31 @@ class CatalogImages(models.Model):
         db_table = 'images'
         verbose_name = 'изображение'
         verbose_name_plural = 'изображения'
+
+
+class DynamicSiteModel(models.Model):
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        self.__class__.objects.exclude(id=self.id).delete()
+        super(DynamicSiteModel, self).save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        try:
+            return cls.objects.get()
+        except cls.DoesNotExist:
+            return cls()
+
+
+class DynamicSiteSettings(DynamicSiteModel):
+
+    title = models.CharField(max_length=256, verbose_name='title')
+    meta_content = models.CharField(max_length=256, verbose_name='meta_content', default='page_content')
+    cache_timeout = models.IntegerField(default=300, verbose_name='cache timeout')
+    logo = models.ImageField(upload_to='site_images/', null=True, verbose_name='изображения сайта')
+
+    def __str__(self):
+        return 'Site Configuration'
