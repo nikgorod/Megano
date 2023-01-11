@@ -1,8 +1,26 @@
 from django.contrib import admin
 from django.db.utils import ProgrammingError
-
-from .models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, DynamicSiteSettings
+from .models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, DynamicSiteSettings, \
+    Specifications, GoodSpecification, Review, Manufacturer
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+
+
+class SpecificationInLine(admin.TabularInline):
+    model = Specifications
+    extra = 0
+
+
+class GoodSpecificationInLine(admin.TabularInline):
+    model = GoodSpecification
+    extra = 0
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    """Админ модель для отзывов"""
+    model = Review
+    list_display = ['profile', 'date']
+    search_fields = ['review']
 
 
 @admin.register(GoodCategory)
@@ -12,6 +30,7 @@ class GoodCategoryAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
     list_filter = ['name', 'active_goods']
+    inlines = [SpecificationInLine]
 
 
 @admin.register(UserProfile)
@@ -51,12 +70,21 @@ class ShopAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 
+@admin.register(Manufacturer)
+class ManufacturerAdmin(admin.ModelAdmin):
+    """Админ-модель производителя товара"""
+    model = Manufacturer
+    list_display = ['name', 'category']
+    list_filter = ['category']
+
+
 @admin.register(Good)
 class GoodAdmin(admin.ModelAdmin):
     """Админ модель товара"""
     model = Good
     list_display = ['name', 'category']
     search_fields = ['name', 'category', 'description']
+    inlines = [GoodSpecificationInLine]
 
 
 class CatalogImagesInLine(admin.TabularInline):
@@ -69,7 +97,8 @@ class CatalogAdmin(admin.ModelAdmin):
     """Админ модель каталога"""
     model = Catalog
     list_display = ['good', 'shop', 'count']
-    list_filter = ['count', 'discount', 'shop']
+    list_filter = ['count', 'discount', 'shop', 'limited_edition']
+    search_fields = ['good', 'shop']
     inlines = [CatalogImagesInLine]
 
 

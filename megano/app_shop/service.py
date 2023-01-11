@@ -1,3 +1,27 @@
+from .models import Review, UserProfile, User
+
+
+def ordering_catalog(ordering):
+    """Метод сортировки"""
+    try:
+        if ordering.startswith('-'):
+            if ordering[1:] == 'price':
+                return '-price'
+            elif ordering[1:] == 'reviews':
+                return '-reviews_num'
+            elif ordering[1:] == 'release_year':
+                return '-good__release_year'
+        else:
+            if ordering == 'price':
+                return 'price'
+            elif ordering == 'reviews':
+                return 'reviews_num'
+            elif ordering == 'release_year':
+                return 'good__release_year'
+    except AttributeError:
+        return None
+
+
 class GoodAtBasket:
     """Сервис корзины с товарами"""
 
@@ -29,14 +53,17 @@ def send_notification(message: str):
 
 class AddReview:
     """Сервис по добавлению отзыва"""
+    @staticmethod
+    def add_review_to_good(form, request, pk):
+        new_review = form.save(commit=False)
+        new_review.catalog_id = pk
+        new_review.profile_id = request.user.profile.id
+        new_review.save()
 
-    def add_review_to_good(self, text: str, user_id: int, good_id: int):
-        """Метод по добавлению отзыва к товару"""
-        pass
-
-    def get_list_of_reviews_at_good(self):
-        """Получение списка отзывов о товаре"""
-        pass
+    @staticmethod
+    def get_list_of_reviews_at_good(catalog_id):
+        reviews = Review.objects.filter(catalog_id=catalog_id)
+        return reviews
 
     def get_num_of_reviews_at_good(self, request):
         """Метод получения кол-ва отзывов о товаре"""
@@ -61,3 +88,46 @@ class Payment:
     def get_status_of_payment(self):
         """Метод получения статуса оплаты"""
         pass
+
+
+class ProfileEdit:
+    """Сервис по редактированию пользователя"""
+    @staticmethod
+    def username_edit(profile, new_name):
+        if len(new_name) == 3:
+            profile.last_name = new_name[0]
+            profile.first_name = new_name[1]
+            profile.middle_name = new_name[2]
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def avatar_edit(profile, new_avatar):
+        profile.avatar = new_avatar
+
+    @staticmethod
+    def tel_edit(profile, new_tel):
+        old_tel = profile.tel
+        if new_tel != old_tel:
+            is_tel_exist = UserProfile.objects.filter(tel=new_tel)
+            if not is_tel_exist:
+                profile.tel = new_tel
+                return True
+            else:
+                return False
+        else:
+            return True
+
+    @staticmethod
+    def email_edit(profile, new_email):
+        old_email = profile.user.email
+        if new_email != old_email:
+            is_email_exist = UserProfile.objects.filter(user__email=new_email)
+            if not is_email_exist:
+                profile.user.email = new_email
+                return True
+            else:
+                return False
+        else:
+            return True

@@ -22,7 +22,7 @@
     <meta name="description" content="{{site_settings.meta_content}}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <link href="favicon.ico" rel="shortcut icon">
+    <link href="{% static 'assets/img/favicon.ico' %}" rel="shortcut icon">
     <link rel="preload" href="{% static 'assets/fonts/Roboto/Roboto-Regular.woff' %}" as="font">
     <link rel="preload" href="{% static 'assets/fonts/Roboto/Roboto-Italic.woff' %}" as="font">
     <link rel="preload" href="{% static 'assets/fonts/Roboto/Roboto-Bold.woff' %}" as="font">
@@ -66,7 +66,7 @@
                     <div class="row ControlPanel-rowSplit">
                         {% if request.user.is_authenticated %}
                             <div class="row-block">
-                                <a class="ControlPanel-title" href="#">Profile/</a>
+                                <a class="ControlPanel-title" href="{% url 'personal' user.profile.id %}">Profile/</a>
                                 <a class="ControlPanel-title" href="{% url 'logout' %}">Log out</a>
                             </div>
                         {% else %}
@@ -93,12 +93,12 @@
             </div>
             <div class="wrap">
               <div class="row Header-rowMain">
-                <div class="row-block Header-logo"><a class="logo" href="#"><img class="logo-image" src="{{site_settings.logo.url}}" alt="logo.png"/></a>
+                <div class="row-block Header-logo"><a class="logo" href="{% url 'main_page' %}"><img class="logo-image" src="{{site_settings.logo.url}}" alt="logo.png"/></a>
                 </div>
                 <nav class="row-block row-block_right Header-menu">
                   <div class="menuModal" id="navigate">
                     <ul class="menu menu_main">
-                      <li class="menu-item"><a class="menu-link" href="#">Home</a>
+                      <li class="menu-item"><a class="menu-link" href="{% url 'main_page' %}">Home</a>
                       </li>
 
                       <li class="menu-item"><a class="menu-link" href="#">Blog</a>
@@ -106,7 +106,7 @@
                       <li class="menu-item"><span class="menu-label menu-label_success">Hot</span><a class="menu-link" href="#">Gallery</a>
                       </li>
 
-                      <li class="menu-item"><a class="menu-link" href="#">Purchase</a>
+                      <li class="menu-item"><a class="menu-link" href="{% url 'catalog_all' %}">Purchase</a>
                       </li>
                     </ul>
                   </div>
@@ -134,14 +134,12 @@
                       </div>
                     </div>
                     <div class="CategoriesButton-content">
-                       {% cache site_settings.cache_timeout good_categories_list %}
                            {% for i_category in good_categories %}
-                              <div class="CategoriesButton-link"><a href="#">
+                              <div class="CategoriesButton-link"><a href="{% url 'catalog' i_category.id %}">
                                   <div class="CategoriesButton-icon"><img src="{% static 'assets/img/icons/departments/1.svg' %}" alt="1.svg"/>
                                   </div><span class="CategoriesButton-text">{{i_category.name}}</span></a>
                               </div>
                            {% endfor %}
-                       {% endcache %}
                     </div>
                   </div>
                 </div>
@@ -149,8 +147,9 @@
                 </div>
                 <div class="Header-search">
                   <div class="search">
-                    <form class="form form_search" action="#" method="post">
-                      <input class="search-input" id="query" name="query" type="text" placeholder="What are you looking for ..."/>
+                    <form class="form form_search" action="{% url 'catalog_all' %}" method="get">
+                        {% csrf_token %}
+                        {{search_form}}
                       <button class="search-button" type="submit" name="search" id="search"><img src="{%static 'assets/img/icons/search.svg' %}" alt="search.svg"/>Search
                       </button>
                     </form>
@@ -168,7 +167,7 @@
           <footer class="Footer">
             <div class="wrap">
               <div class="row Footer-main">
-                <div class="row-block"><a class="logo Footer-logo" href="index.html"><img class="logo-image" src="{{site_settings.logo.url}}" alt="logo_footer.png"/></a>
+                <div class="row-block"><a class="logo Footer-logo" href="{% url 'main_page' %}"><img class="logo-image" src="{{site_settings.logo.url}}" alt="logo_footer.png"/></a>
                   <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincid  unt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
                   </p>
                   <ul class="menu menu_img menu_smallImg Footer-menuSoc">
@@ -265,14 +264,14 @@
           <!--    +Article('portfolio')-->
           <!---->
     {% endblock %}
-
+    <script src="{% static 'assets/plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
+      <script src="{% static 'assets/plg/form/jquery.form.js' %}"></script>
+      <script src="{% static 'assets/plg/form/jquery.maskedinput.min.js' %}"></script>
+      <script src="{% static 'assets/plg/range/ion.rangeSlider.min.js' %}"></script>
+      <script src="{% static 'assets/plg/Slider/slick.min.js' %}"></script>
+      <script src="{% static 'assets/js/scripts.js' %}"></script>
     {% block scripts %}
-          <script src="{% static 'assets/plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
-          <script src="{% static 'assets/plg/form/jquery.form.js' %}"></script>
-          <script src="{% static 'assets/plg/form/jquery.maskedinput.min.js' %}"></script>
-          <script src="{% static 'assets/plg/range/ion.rangeSlider.min.js' %}"></script>
-          <script src="{% static 'assets/plg/Slider/slick.min.js' %}"></script>
-          <script src="{% static 'assets/js/scripts.js' %}"></script>
+
     {% endblock %}
 </body>
 </html>
