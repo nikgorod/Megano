@@ -100,20 +100,6 @@ class GoodCategory(models.Model):
         return f'{self.name}'
 
 
-class Specifications(models.Model):
-    """Модель Хар-стик"""
-    specification = models.CharField(max_length=30, verbose_name='характеристика')
-    category = models.ForeignKey(GoodCategory, on_delete=models.CASCADE, verbose_name='категория товара')
-
-    class Meta:
-        db_table = 'specification'
-        verbose_name = 'характеристика'
-        verbose_name_plural = 'характеристики'
-
-    def __str__(self):
-        return f'{self.specification}'
-
-
 class Manufacturer(models.Model):
     """Модель производителей"""
     name = models.CharField(max_length=20, verbose_name='производитель', db_index=True)
@@ -129,6 +115,34 @@ class Manufacturer(models.Model):
         return f'{self.name}'
 
 
+class Specification(models.Model):
+    name = models.CharField(max_length=100, verbose_name='название характеристики')
+    category = models.ForeignKey(GoodCategory, on_delete=models.CASCADE, verbose_name='категория',
+                                 related_name='specification')
+
+    class Meta:
+        db_table = 'specifications'
+        verbose_name = 'характеристика'
+        verbose_name_plural = 'характеристики'
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class SpecificationValues(models.Model):
+    specification = models.ForeignKey(Specification, on_delete=models.CASCADE, verbose_name='характеристика',
+                                      related_name='specification_value')
+    value = models.CharField(max_length=20, verbose_name='значение характеристики')
+
+    class Meta:
+        db_table = 'specification_values'
+        verbose_name = 'значение характеристики'
+        verbose_name_plural = 'значения характеристик'
+
+    def __str__(self):
+        return f'{self.specification.name} {self.value}'
+
+
 class Good(models.Model):
     """Модель товара"""
     name = models.CharField(max_length=100, verbose_name='название товара', db_index=True)
@@ -138,6 +152,7 @@ class Good(models.Model):
                                  related_name='good')
     purchases_number = models.IntegerField(verbose_name='кол-во покупок')
     release_year = models.IntegerField(verbose_name='год выпуска', default=2010)
+    specifications = models.ManyToManyField(SpecificationValues)
 
     class Meta:
         db_table = 'good'
@@ -149,22 +164,6 @@ class Good(models.Model):
 
     def __str__(self):
         return f'{self.name}'
-
-
-class GoodSpecification(models.Model):
-    """Модель хар-ик и значений товара"""
-    specification = models.ForeignKey(Specifications, on_delete=models.CASCADE, verbose_name='характеристика',
-                                      related_name='specifications')
-    good = models.ForeignKey(Good, on_delete=models.CASCADE, verbose_name='товар', related_name='good_specifications')
-    value = models.CharField(max_length=30, verbose_name='значение')
-
-    class Meta:
-        db_table = 'good_specification'
-        verbose_name = 'характеристика товара'
-        verbose_name_plural = 'характеристики товаров'
-
-    def __str__(self):
-        return f'{self.value}'
 
 
 class GoodTags(models.Model):

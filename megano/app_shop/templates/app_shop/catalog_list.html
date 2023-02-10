@@ -57,21 +57,21 @@
                   <div class="form-group">
                       <p>Производители: </p>
                   </div>
-                  <div class="form-group" style="height:100px; overflow: auto;">
+                  <div class="form-group" style="height:70px; overflow: auto;">
                       {{filter.form.good__manufacturer}}
                   </div>
                   <div class="form-group">
-                    {% for choice in filter.form.good__good_specifications %}
-                      <label>
-                        {{ choice.tag }} {{ choice.choice_label }}
-                      </label>
-                  {% endfor %}
+                      <p>Характеристики: </p>
                   </div>
+                  <div class="form-group" style="height:170px; overflow: auto;">
+                      {{filter.form.good__specifications}}
+                  </div>
+                  {% endif %}
                   <div class="form-group">
                     <div class="buttons"><button class="btn btn_square btn_dark btn_narrow" type="submit">Filter</button>
                     </div>
                   </div>
-                  {% endif %}
+
                 </form>
               </div>
             </div>
@@ -113,10 +113,10 @@
             </div>
           </div>
           <div class="Cards">
-            {% if not filter.qs %}
+            {% if not page_obj %}
               <h3>По данному запросу ничего не найдено!</h3>
             {% endif %}
-              {% for i_catalog_good in filter.qs %}
+              {% for i_catalog_good in page_obj %}
                 <div class="Card hide_md"><a class="Card-picture" href="{% url 'catalog_detail' i_catalog_good.id %}">
                       <img src='{{i_catalog_good.images.first.image.url}}' alt="card.jpg"/>
                 </a>
@@ -136,7 +136,21 @@
             {% endfor %}
           </div>
           <div class="Pagination">
-            <div class="Pagination-ins"><a class="Pagination-element Pagination-element_prev" href="#"><img src="{% static 'assets/img/icons/prevPagination.svg' %}" alt="prevPagination.svg"/></a><a class="Pagination-element Pagination-element_current" href="#"><span class="Pagination-text">1</span></a><a class="Pagination-element" href="#"><span class="Pagination-text">2</span></a><a class="Pagination-element" href="#"><span class="Pagination-text">3</span></a><a class="Pagination-element Pagination-element_prev" href="#"><img src="{% static 'assets/img/icons/nextPagination.svg' %}" alt="nextPagination.svg"/></a>
+            <div class="Pagination-ins">
+              {% if page_obj.has_previous %}
+              <a class="Pagination-element Pagination-element_prev" href="?page={{ page_obj.previous_page_number }}">
+                <img src="{% static 'assets/img/icons/prevPagination.svg' %}" alt="prevPagination.svg"/>
+              </a>
+              {% endif %}
+              {% for i in range_page %}
+              <a class="Pagination-element {% if request.get_full_path == request.path|add:'?page={{i}}' %}Pagination-element_current{% endif %}" href="?page={{i}}">
+                <span class="Pagination-text">{{i}}</span></a>
+              {% endfor %}
+              {% if page_obj.has_next %}
+                <a class="Pagination-element Pagination-element_prev" href="?page={{ page_obj.next_page_number }}">
+                  <img src="{% static 'assets/img/icons/nextPagination.svg' %}" alt="nextPagination.svg"/>
+                </a>
+              {% endif %}
             </div>
           </div>
         </div>

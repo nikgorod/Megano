@@ -1,13 +1,14 @@
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.db.models import Count
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, DetailView
 from rest_framework.views import APIView
 from .serializers import SiteSettingsSerializer
-from .models import GoodCategory, DynamicSiteSettings, Catalog, GoodTags, UserProfile, User
+from .models import GoodCategory, DynamicSiteSettings, Catalog, GoodTags, UserProfile, User, Specification
 from .registration import *
 from rest_framework.response import Response
 from .forms import ReviewForm, ProfileForm, SearchForm
@@ -151,7 +152,11 @@ class CatalogListView(ListView):
             context['filter'] = CatalogFilter(self.request.GET, queryset=Catalog.objects.select_related('good').prefetch_related(
                 'images').filter(
                 good__category_id=self.kwargs['category_id']))
-        context['tags'] = GoodTags.objects.all()
+        paginator = Paginator(context['filter'].qs, 3)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
+        context['range_page'] = "".join(map(str, (range(1, page_obj.paginator.num_pages + 1))))
         context['good_categories'] = GoodCategory.objects.filter(active_goods=True)
         context['search_form'] = SearchForm()
         return context
@@ -195,6 +200,10 @@ class CatalogAllListView(ListView):
                                           queryset=Catalog.objects.select_related('good').prefetch_related(
                                               'images').all())
 
-        context['tags'] = GoodTags.objects.all()
+        paginator = Paginator(context['filter'].qs, 3)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
+        context['range_page'] = "".join(map(str, (range(1, page_obj.paginator.num_pages + 1))))
         context['good_categories'] = GoodCategory.objects.filter(active_goods=True)
         return context

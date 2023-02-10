@@ -1,18 +1,22 @@
 from django.contrib import admin
 from django.db.utils import ProgrammingError
 from .models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, DynamicSiteSettings, \
-    Specifications, GoodSpecification, Review, Manufacturer
+    Specification, Review, Manufacturer, SpecificationValues
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 
-class SpecificationInLine(admin.TabularInline):
-    model = Specifications
-    extra = 0
+@admin.register(Specification)
+class SpecificationAdmin(admin.ModelAdmin):
+    """Админ-модель характеристик"""
+    model = Specification
+    list_display = ['name', 'category']
 
 
-class GoodSpecificationInLine(admin.TabularInline):
-    model = GoodSpecification
-    extra = 0
+@admin.register(SpecificationValues)
+class SpecificationValues(admin.ModelAdmin):
+    """Админ-модель значений характеристик"""
+    model = SpecificationValues
+    list_display = ['specification', 'value']
 
 
 @admin.register(Review)
@@ -30,7 +34,6 @@ class GoodCategoryAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
     list_filter = ['name', 'active_goods']
-    inlines = [SpecificationInLine]
 
 
 @admin.register(UserProfile)
@@ -84,7 +87,6 @@ class GoodAdmin(admin.ModelAdmin):
     model = Good
     list_display = ['name', 'category']
     search_fields = ['name', 'category', 'description']
-    inlines = [GoodSpecificationInLine]
 
 
 class CatalogImagesInLine(admin.TabularInline):
