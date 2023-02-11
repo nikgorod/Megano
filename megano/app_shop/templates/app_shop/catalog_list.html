@@ -1,0 +1,160 @@
+{% extends "app_shop/base_generic.html" %}
+{% load static %}
+{% load cache %}
+{% block content %}
+  <div class="Middle Middle_top">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">Catalog Megano
+          </h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="{% url 'main_page' %}">home</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Catalog</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="Section Section_column Section_columnLeft">
+      <div class="wrap">
+
+        <div class="Section-column">
+            <div class="Section-columnSection">
+              <header class="Section-header">
+                <strong class="Section-title">Filter
+                </strong>
+              </header>
+              <div class="Section-columnContent">
+
+                <form class="form" method="get">
+                  <div class="form-group">
+                    <div class="range Section-columnRange">
+                          {{filter.form.price}}
+                      <div class="range-price">Price:&#32;
+                        <div class="rangePrice">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    {{filter.form.good__name}}
+                  </div>
+                  <div class="form-group">
+                    <label class="toggle">
+                    {{filter.form.count}}<span class="toggle-box"></span><span class="toggle-text">Только товары в наличии</span>
+                  </label>
+
+                  </div>
+                  <div class="form-group">
+                      <p>Магазины: </p>
+                  </div>
+                  <div class="form-group" style="height:100px; overflow: auto;">
+                      {{filter.form.shop__name}}
+                  </div>
+                  {% if category_id %}
+                  <div class="form-group">
+                      <p>Производители: </p>
+                  </div>
+                  <div class="form-group" style="height:70px; overflow: auto;">
+                      {{filter.form.good__manufacturer}}
+                  </div>
+                  <div class="form-group">
+                      <p>Характеристики: </p>
+                  </div>
+                  <div class="form-group" style="height:170px; overflow: auto;">
+                      {{filter.form.good__specifications}}
+                  </div>
+                  {% endif %}
+                  <div class="form-group">
+                    <div class="buttons"><button class="btn btn_square btn_dark btn_narrow" type="submit">Filter</button>
+                    </div>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+            <div class="Section-columnSection">
+              <header class="Section-header">
+                <strong class="Section-title">Popular tags
+                </strong>
+              </header>
+              <div class="Section-columnContent">
+                <div class="buttons">
+                  <form method="get">
+                    {% csrf_token %}
+                    {% for i_tag in tags %}
+                      <input class="btn btn_default btn_sm" type="submit" value="{{i_tag}}">
+                    {% endfor %}
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="Section-content">
+          <div class="Sort">
+            <div class="Sort-title">Сортировать по:
+            </div>
+            <div class="Sort-variants">
+              <a class="Sort-sortBy Sort-sortBy_dec" href="#">Популярности</a>
+              {% if category_id %}
+                <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=price' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog' category_id %}?ordering={% if request.get_full_path == request.path|add:'?ordering=price' %}-price{% else %}price{% endif %}">Цене</a>
+                <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=reviews' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog' category_id %}?ordering={% if request.get_full_path == request.path|add:'?ordering=reviews' %}-reviews{% else %}reviews{% endif %}">Отзывам</a>
+                <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=release_year' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog' category_id %}?ordering={% if request.get_full_path == request.path|add:'?ordering=release_year' %}-release_year{% else %}release_year{% endif %}">Новизне</a>
+              {% else %}
+                <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=price' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog_all' %}?ordering={% if request.get_full_path == request.path|add:'?ordering=price' %}-price{% else %}price{% endif %}">Цене</a>
+                <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=reviews' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog_all' %}?ordering={% if request.get_full_path == request.path|add:'?ordering=reviews' %}-reviews{% else %}reviews{% endif %}">Отзывам</a>
+                <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=release_year' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog_all' %}?ordering={% if request.get_full_path == request.path|add:'?ordering=release_year' %}-release_year{% else %}release_year{% endif %}">Новизне</a>
+              {% endif %}
+
+
+            </div>
+          </div>
+          <div class="Cards">
+            {% if not page_obj %}
+              <h3>По данному запросу ничего не найдено!</h3>
+            {% endif %}
+              {% for i_catalog_good in page_obj %}
+                <div class="Card hide_md"><a class="Card-picture" href="{% url 'catalog_detail' i_catalog_good.id %}">
+                      <img src='{{i_catalog_good.images.first.image.url}}' alt="card.jpg"/>
+                </a>
+                  <div class="Card-content">
+                    <strong class="Card-title"><a href="{% url 'catalog_detail' i_catalog_good.id %}">{{ i_catalog_good.good.name }}</a>
+                    </strong>
+                    <div class="Card-description">
+                      <div class="Card-cost"><span class="Card-price">{{ i_catalog_good.price }}$</span>
+                      </div>
+                      <div class="Card-category">{{ i_catalog_good.good.category.name }}
+                      </div>
+                      <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/cart.svg' %}" alt="cart.svg"/></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            {% endfor %}
+          </div>
+          <div class="Pagination">
+            <div class="Pagination-ins">
+              {% if page_obj.has_previous %}
+              <a class="Pagination-element Pagination-element_prev" href="?page={{ page_obj.previous_page_number }}">
+                <img src="{% static 'assets/img/icons/prevPagination.svg' %}" alt="prevPagination.svg"/>
+              </a>
+              {% endif %}
+              {% for i in range_page %}
+              <a class="Pagination-element {% if request.get_full_path == request.path|add:'?page={{i}}' %}Pagination-element_current{% endif %}" href="?page={{i}}">
+                <span class="Pagination-text">{{i}}</span></a>
+              {% endfor %}
+              {% if page_obj.has_next %}
+                <a class="Pagination-element Pagination-element_prev" href="?page={{ page_obj.next_page_number }}">
+                  <img src="{% static 'assets/img/icons/nextPagination.svg' %}" alt="nextPagination.svg"/>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

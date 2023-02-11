@@ -52,12 +52,12 @@ class User(AbstractUser):
 
 class UserProfile(models.Model):
     """Расширенная модель пользователя"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='пользователь')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='пользователь', related_name='profile')
     first_name = models.CharField(max_length=30, verbose_name='имя')
     last_name = models.CharField(max_length=30, verbose_name='фамилия')
     middle_name = models.CharField(max_length=30, verbose_name='отчество', null=True)
     balance = models.FloatField(verbose_name='баланс', default=0)
-    tel = models.CharField(max_length=18, verbose_name='телефон')
+    tel = models.CharField(max_length=10, verbose_name='телефон')
     avatar = models.ImageField(upload_to='files/', verbose_name='аватар пользователя')
 
     class Meta:
@@ -100,11 +100,59 @@ class GoodCategory(models.Model):
         return f'{self.name}'
 
 
+class Manufacturer(models.Model):
+    """Модель производителей"""
+    name = models.CharField(max_length=20, verbose_name='производитель', db_index=True)
+    category = models.ForeignKey(GoodCategory, on_delete=models.CASCADE, verbose_name='категория',
+                                 related_name='manufacturer')
+
+    class Meta:
+        db_table = 'manufacturer'
+        verbose_name = 'производитель'
+        verbose_name_plural = 'производители'
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class Specification(models.Model):
+    name = models.CharField(max_length=100, verbose_name='название характеристики')
+    category = models.ForeignKey(GoodCategory, on_delete=models.CASCADE, verbose_name='категория',
+                                 related_name='specification')
+
+    class Meta:
+        db_table = 'specifications'
+        verbose_name = 'характеристика'
+        verbose_name_plural = 'характеристики'
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class SpecificationValues(models.Model):
+    specification = models.ForeignKey(Specification, on_delete=models.CASCADE, verbose_name='характеристика',
+                                      related_name='specification_value')
+    value = models.CharField(max_length=20, verbose_name='значение характеристики')
+
+    class Meta:
+        db_table = 'specification_values'
+        verbose_name = 'значение характеристики'
+        verbose_name_plural = 'значения характеристик'
+
+    def __str__(self):
+        return f'{self.specification.name} {self.value}'
+
+
 class Good(models.Model):
     """Модель товара"""
     name = models.CharField(max_length=100, verbose_name='название товара', db_index=True)
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
     description = models.TextField(verbose_name='описание товара')
-    category = models.ForeignKey(GoodCategory, on_delete=models.CASCADE, verbose_name='категория товара')
+    category = models.ForeignKey(GoodCategory, on_delete=models.CASCADE, verbose_name='категория товара',
+                                 related_name='good')
+    purchases_number = models.IntegerField(verbose_name='кол-во покупок')
+    release_year = models.IntegerField(verbose_name='год выпуска', default=2010)
+    specifications = models.ManyToManyField(SpecificationValues)
 
     class Meta:
         db_table = 'good'
@@ -134,13 +182,16 @@ class GoodTags(models.Model):
 
 class Catalog(models.Model):
     """Модель каталога"""
-    good = models.ForeignKey(Good, on_delete=models.CASCADE, verbose_name='товар', db_index=True)
+    good = models.ForeignKey(Good, on_delete=models.CASCADE, verbose_name='товар', db_index=True,
+                             related_name='catalog')
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, verbose_name='магазин', db_index=True)
     price = models.FloatField(default=0, verbose_name='цена на товар')
     discount = models.IntegerField(default=0, verbose_name='скидка на товар')
     count = models.IntegerField(verbose_name='кол-во товара')
+    limited_edition = models.BooleanField(verbose_name='ограниченный тираж', default=False)
 
     class Meta:
+        order_with_respect_to = 'good'
         db_table = 'catalog'
         verbose_name = 'каталог'
         verbose_name_plural = 'каталоги'
@@ -150,6 +201,23 @@ class Catalog(models.Model):
 
     def __str__(self):
         return f'{self.good.name}, {self.shop.name}'
+
+
+class Review(models.Model):
+    """Модель отзывов"""
+    catalog = models.ForeignKey(Catalog, on_delete=models.CASCADE, verbose_name='каталог', db_index=True,
+                                related_name='reviews')
+    profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name='пользователь')
+    date = models.DateTimeField(auto_now_add=True, verbose_name='дата')
+    review = models.TextField(verbose_name='отзыв')
+
+    class Meta:
+        db_table = 'reviews'
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'комментарии'
+
+    def __str__(self):
+        return f'{self.profile.user.email}'
 
 
 class CatalogImages(models.Model):

@@ -1,8 +1,30 @@
 from django.contrib import admin
 from django.db.utils import ProgrammingError
-
-from .models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, DynamicSiteSettings
+from .models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, DynamicSiteSettings, \
+    Specification, Review, Manufacturer, SpecificationValues
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+
+
+@admin.register(Specification)
+class SpecificationAdmin(admin.ModelAdmin):
+    """Админ-модель характеристик"""
+    model = Specification
+    list_display = ['name', 'category']
+
+
+@admin.register(SpecificationValues)
+class SpecificationValues(admin.ModelAdmin):
+    """Админ-модель значений характеристик"""
+    model = SpecificationValues
+    list_display = ['specification', 'value']
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    """Админ модель для отзывов"""
+    model = Review
+    list_display = ['profile', 'date']
+    search_fields = ['review']
 
 
 @admin.register(GoodCategory)
@@ -51,6 +73,14 @@ class ShopAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 
+@admin.register(Manufacturer)
+class ManufacturerAdmin(admin.ModelAdmin):
+    """Админ-модель производителя товара"""
+    model = Manufacturer
+    list_display = ['name', 'category']
+    list_filter = ['category']
+
+
 @admin.register(Good)
 class GoodAdmin(admin.ModelAdmin):
     """Админ модель товара"""
@@ -69,7 +99,8 @@ class CatalogAdmin(admin.ModelAdmin):
     """Админ модель каталога"""
     model = Catalog
     list_display = ['good', 'shop', 'count']
-    list_filter = ['count', 'discount', 'shop']
+    list_filter = ['count', 'discount', 'shop', 'limited_edition']
+    search_fields = ['good', 'shop']
     inlines = [CatalogImagesInLine]
 
 
