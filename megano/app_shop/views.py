@@ -3,6 +3,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Count
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, DetailView
@@ -14,7 +15,10 @@ from rest_framework.response import Response
 from .forms import ReviewForm, ProfileForm, SearchForm
 from .filter import *
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from .service import AddReview, ProfileEdit, ordering_catalog
+from cart.forms import CartAddProductForm
+from cart.cart import Cart
 
 
 class SettingsApiView(APIView):
@@ -125,13 +129,25 @@ class CatalogDetailView(DetailView):
         context['reviews_form'] = ReviewForm()
         context['good_categories'] = GoodCategory.objects.filter(active_goods=True)
         context['search_form'] = SearchForm()
+        context['add_form'] = CartAddProductForm()
         return context
 
     def post(self, request, pk):
         form = ReviewForm(request.POST)
+        add_form = CartAddProductForm(request.POST)
         if form.is_valid():
             AddReview.add_review_to_good(form, request, pk)
             return redirect(reverse('catalog_detail', kwargs={'pk': pk}) + '#reviews')
+        elif add_form.is_valid():
+            quantity = add_form.cleaned_data['quantity']
+            product = get_object_or_404(Catalog, id=pk)
+
+            if quantity > product.count:
+                messages.add_message(request, messages.INFO, 'Превышено кол-во товара в наличии...')
+            else:
+                cart = Cart(request)
+                cart.add(product=product, quantity=quantity)
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class CatalogListView(ListView):

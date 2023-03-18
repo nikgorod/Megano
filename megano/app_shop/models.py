@@ -116,6 +116,7 @@ class Manufacturer(models.Model):
 
 
 class Specification(models.Model):
+    """Модель характеристики"""
     name = models.CharField(max_length=100, verbose_name='название характеристики')
     category = models.ForeignKey(GoodCategory, on_delete=models.CASCADE, verbose_name='категория',
                                  related_name='specification')
@@ -130,6 +131,7 @@ class Specification(models.Model):
 
 
 class SpecificationValues(models.Model):
+    """Модель значений характеристик"""
     specification = models.ForeignKey(Specification, on_delete=models.CASCADE, verbose_name='характеристика',
                                       related_name='specification_value')
     value = models.CharField(max_length=20, verbose_name='значение характеристики')
@@ -232,7 +234,7 @@ class CatalogImages(models.Model):
 
 
 class DynamicSiteModel(models.Model):
-
+    """Модель настроек сайта"""
     class Meta:
         abstract = True
 
@@ -249,6 +251,8 @@ class DynamicSiteModel(models.Model):
 
 
 class DynamicSiteSettings(DynamicSiteModel):
+
+    """Настройки сайта"""
 
     title = models.CharField(max_length=256, verbose_name='title')
     meta_content = models.CharField(max_length=256, verbose_name='meta_content', default='page_content')
