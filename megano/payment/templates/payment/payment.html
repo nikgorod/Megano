@@ -1,0 +1,91 @@
+{% extends "app_shop/base_generic.html" %}
+{% load static %}
+{% block content %}
+<div class="Middle Middle_top" id="card">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">Оплата
+          </h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="index.html">home</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Оплата</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="Section">
+      <div class="wrap">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form class="form Payment"  method="post">
+          {% csrf_token %}
+          <div class="Payment-card">
+            <div class="form-group">
+              {{payment_form}}
+            </div>
+          </div>
+          <div class="Payment-pay"><button id="submit_btn" class="btn btn_primary" type="submit">Оплатить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+<div style="display:none;" class="Middle Middle_top" id="payment">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">Ожидание оплаты
+          </h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="index.html">home</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Ожидание оплаты</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="Section">
+      <div class="wrap">
+        <div class="ProgressPayment">
+          <div class="ProgressPayment-title">Ждем подтверждения оплаты платежной системой
+          </div>
+          <div class="ProgressPayment-icon">
+            <div class="cssload-thecube">
+              <div class="cssload-cube cssload-c1"></div>
+              <div class="cssload-cube cssload-c2"></div>
+              <div class="cssload-cube cssload-c4"></div>
+              <div class="cssload-cube cssload-c3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', ()=> {
+    const btn = document.getElementById('submit_btn');
+    const card = document.getElementById("card");
+    const payment = document.getElementById("payment");
+    const cardNum = document.getElementById("id_card_num");
+    btn.addEventListener('click', ()=>{
+        console.log(cardNum.value)
+        if (cardNum.value.length == 9) {
+          card.setAttribute('style', 'display:none');
+          payment.setAttribute('style', 'display:block');
+        }
+
+    })
+})
+</script>
+{% endblock %}

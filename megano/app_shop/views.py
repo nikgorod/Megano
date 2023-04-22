@@ -9,7 +9,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 from rest_framework.views import APIView
 from .serializers import SiteSettingsSerializer
-from .models import GoodCategory, DynamicSiteSettings, Catalog, GoodTags, UserProfile, User, Specification
+from .models import GoodCategory, DynamicSiteSettings, Catalog, UserProfile
 from .registration import *
 from rest_framework.response import Response
 from .forms import ReviewForm, ProfileForm, SearchForm
@@ -19,6 +19,7 @@ from django.shortcuts import get_object_or_404
 from .service import AddReview, ProfileEdit, ordering_catalog
 from cart.forms import CartAddProductForm
 from cart.cart import Cart
+from payment.models import Order
 
 
 class SettingsApiView(APIView):
@@ -45,8 +46,9 @@ class MainPage(View):
             items = []
         limited_edition = Catalog.objects.select_related('shop', 'good').prefetch_related('images').filter(
             limited_edition=True)[:16]
-        top_goods = Catalog.objects.select_related('shop', 'good').prefetch_related('images').all().order_by('good')[:8]
+        top_goods = Catalog.objects.select_related('shop', 'good').prefetch_related('images').all().order_by('-purchases_number')[:8]
         search_form = SearchForm()
+        print(items)
         return render(request, 'app_shop/index.html', {'good_categories': good_categories,
                                                        'favorite_categories': items,
                                                        'top_goods': top_goods,
@@ -62,6 +64,7 @@ class PersonalDetailView(DetailView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super(PersonalDetailView, self).get_context_data(**kwargs)
         context['good_categories'] = GoodCategory.objects.filter(active_goods=True)
+        context['order'] = Order.objects.filter(user_id=self.request.user.id).order_by('-date').first()
         context['search_form'] = SearchForm()
         return context
 
@@ -120,7 +123,7 @@ class ProfileDetailView(DetailView, LoginRequiredMixin):
 
 
 class CatalogDetailView(DetailView):
-    """Детальное представление товрар"""
+    """Детальное представление товара"""
     model = Catalog
 
     def get_context_data(self, **kwargs):
@@ -160,6 +163,7 @@ class CatalogListView(ListView):
         context = super(CatalogListView, self).get_context_data(**kwargs)
         context['category_id'] = self.kwargs['category_id']
         ordering = ordering_catalog(self.request.GET.get('ordering'))
+        print(ordering)
         if ordering:
             context['filter'] = CatalogFilter(self.request.GET, queryset=Catalog.objects.select_related('good').prefetch_related(
                 'images').filter(
@@ -222,4 +226,26 @@ class CatalogAllListView(ListView):
         context['page_obj'] = page_obj
         context['range_page'] = "".join(map(str, (range(1, page_obj.paginator.num_pages + 1))))
         context['good_categories'] = GoodCategory.objects.filter(active_goods=True)
+        return context
+
+
+class OrdersDetailView(PersonalDetailView):
+    template_name = 'payment/orders_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PersonalDetailView, self).get_context_data(**kwargs)
+        context['good_categories'] = GoodCategory.objects.filter(active_goods=True)
+        context['orders'] = Order.objects.filter(user_id=self.request.user.pk).order_by('-date')
+        context['search_form'] = SearchForm()
+        return context
+
+
+class OrderDetailView(PersonalDetailView):
+    template_name = 'payment/order.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PersonalDetailView, self).get_context_data(**kwargs)
+        context['good_categories'] = GoodCategory.objects.filter(active_goods=True)
+        context['search_form'] = SearchForm()
+        context['order'] = Order.objects.get(id=self.kwargs['order_id'])
         return context

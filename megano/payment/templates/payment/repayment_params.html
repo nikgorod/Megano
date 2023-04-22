@@ -1,0 +1,37 @@
+{% extends "app_shop/base_generic.html" %}
+{% load static %}
+{% block content %}
+<div class="Middle Middle_top" xmlns="http://www.w3.org/1999/html">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">Оформление заказа
+          </h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="index.html">home</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Оформление заказа</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+        <div class="Section Section_column Section_columnRight Section_columnWide Order">
+      <div class="wrap">
+      <form class="form" method="post">
+            {% csrf_token %}
+      <div class="form-group">
+                <div>
+                  {{payment_form.as_p}}
+                </div>
+              </div>
+      <div class="Cart-block" style="margin-top:20px">
+                      <button class="btn btn_primary btn_lg" type="submit">Оплатить
+                      </button>
+      </div>
+      </form>
+      </div>
+
+          </div>
+  </div>
+{% endblock %}

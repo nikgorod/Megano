@@ -191,6 +191,7 @@ class Catalog(models.Model):
     discount = models.IntegerField(default=0, verbose_name='скидка на товар')
     count = models.IntegerField(verbose_name='кол-во товара')
     limited_edition = models.BooleanField(verbose_name='ограниченный тираж', default=False)
+    purchases_number = models.PositiveIntegerField(verbose_name='кол-во покупок', default=0)
 
     class Meta:
         order_with_respect_to = 'good'
@@ -258,6 +259,9 @@ class DynamicSiteSettings(DynamicSiteModel):
     meta_content = models.CharField(max_length=256, verbose_name='meta_content', default='page_content')
     cache_timeout = models.IntegerField(default=300, verbose_name='cache timeout')
     logo = models.ImageField(upload_to='site_images/', null=True, verbose_name='изображения сайта')
+    express_delivery_cost = models.IntegerField(default=500, verbose_name='стоимость экспресс доставки')
+    delivery_cost = models.IntegerField(default=200, verbose_name='стоимость доставки')
+    order_cost = models.IntegerField(default=2000, verbose_name='стоимость заказа')
 
     def __str__(self):
         return 'Site Configuration'

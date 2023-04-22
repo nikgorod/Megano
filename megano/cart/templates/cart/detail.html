@@ -68,60 +68,15 @@
               <strong class="Cart-title">Итого:
               </strong><span class="Cart-price">{{ cart.get_total_price }}$</span>
             </div>
-            <div class="Cart-block"><a class="btn btn_success btn_lg" href="order.html">Оформить заказ</a>
-            </div>
+            {% if cart_items_num %}
+              <div class="Cart-block"><a class="btn btn_success btn_lg" href="{% url 'user_param_order' %}">Оформить заказ</a>
+              </div>
+            {% else %}
+              <h3>Чтобы оформить заказ, добавьте в корзину товары</h3>
+            {% endif %}
           </div>
         </form>
       </div>
     </div>
   </div>
 {% endblock %}
-
-
-<h1>Корзина покупок</h1>
-  <table class="cart">
-    <thead>
-      <tr>
-        <th>Картинка</th>
-        <th>Товар</th>
-        <th>Обновить кол-во</th>
-        <th>Удалить</th>
-        <th>Кол-во</th>
-        <th>Цена за шт</th>
-        <th>Общая стоимость</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in cart %}
-        {% with product=item.product %}
-          <tr>
-            <td>
-            </td>
-            <td>{{ product.name }}</td>
-            <td>
-              <form action="{% url 'cart_add' product.id %}" method="post">
-                {{ item.update_quantity_form.quantity }}
-                {{ item.update_quantity_form.update }}
-                <input type="submit" value="Обновить">
-                {% csrf_token %}
-              </form>
-            </td>
-            <td><a href="{% url 'cart_remove' product.id %}">Удалить</a></td>
-            <td>
-              {{ item.quantity }}
-            </td>
-            <td class="num">${{ item.price }}</td>
-            <td class="num">${{ item.total_price }}</td>
-          </tr>
-        {% endwith %}
-      {% endfor %}
-      <tr class="total">
-        <td>Всего</td>
-        <td colspan="4"></td>
-        <td class="num">${{ cart.get_total_price }}</td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="text-right">
-    <a href="#" class="button">Оформить заказ</a>
-  </p>

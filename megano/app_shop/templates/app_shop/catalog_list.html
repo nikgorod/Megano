@@ -98,12 +98,14 @@
             <div class="Sort-title">Сортировать по:
             </div>
             <div class="Sort-variants">
-              <a class="Sort-sortBy Sort-sortBy_dec" href="#">Популярности</a>
+
               {% if category_id %}
+                <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=purchases_number' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog' category_id %}?ordering={% if request.get_full_path == request.path|add:'?ordering=purchases_number' %}-purchases_number{% else %}purchases_number{% endif %}">Популярности</a>
                 <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=price' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog' category_id %}?ordering={% if request.get_full_path == request.path|add:'?ordering=price' %}-price{% else %}price{% endif %}">Цене</a>
                 <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=reviews' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog' category_id %}?ordering={% if request.get_full_path == request.path|add:'?ordering=reviews' %}-reviews{% else %}reviews{% endif %}">Отзывам</a>
                 <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=release_year' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog' category_id %}?ordering={% if request.get_full_path == request.path|add:'?ordering=release_year' %}-release_year{% else %}release_year{% endif %}">Новизне</a>
               {% else %}
+                <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=purchases_number' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog_all' %}?ordering={% if request.get_full_path == request.path|add:'?ordering=purchases_number' %}-purchases_number{% else %}purchases_number{% endif %}">Популярности</a>
                 <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=price' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog_all' %}?ordering={% if request.get_full_path == request.path|add:'?ordering=price' %}-price{% else %}price{% endif %}">Цене</a>
                 <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=reviews' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog_all' %}?ordering={% if request.get_full_path == request.path|add:'?ordering=reviews' %}-reviews{% else %}reviews{% endif %}">Отзывам</a>
                 <a class="Sort-sortBy {% if request.get_full_path == request.path|add:'?ordering=release_year' %}Sort-sortBy_inc{% else %}Sort-sortBy_dec{% endif %}" href="{% url 'catalog_all' %}?ordering={% if request.get_full_path == request.path|add:'?ordering=release_year' %}-release_year{% else %}release_year{% endif %}">Новизне</a>

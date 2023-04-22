@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db.utils import ProgrammingError
-from .models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, DynamicSiteSettings, \
+from app_shop.models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, \
+    DynamicSiteSettings, \
     Specification, Review, Manufacturer, SpecificationValues
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import DynamicSiteSettings
+from app_shop.models import DynamicSiteSettings
 
 
 class SiteSettingsSerializer(serializers.ModelSerializer):

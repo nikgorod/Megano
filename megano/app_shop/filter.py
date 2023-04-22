@@ -1,7 +1,7 @@
-from .models import Catalog
+from app_shop.models import Catalog
 import django_filters
 from django import forms
-from .models import Shop, Manufacturer, SpecificationValues
+from app_shop.models import Shop, Manufacturer, SpecificationValues
 
 
 def price_filter(queryset, price, value):

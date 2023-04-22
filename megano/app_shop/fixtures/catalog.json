@@ -1,0 +1,2 @@
+[{"model": "app_shop.catalog", "pk": 1, "fields": {"good": 1, "shop": 1, "price": 200.0, "discount": 0, "count": 5, "limited_edition": true, "_order": 0}},
+  {"model": "app_shop.catalog", "pk": 2, "fields": {"good": 2, "shop": 2, "price": 250.0, "discount": 0, "count": 5, "limited_edition": true, "_order": 0}}]

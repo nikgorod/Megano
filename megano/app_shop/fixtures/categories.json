@@ -1,0 +1,1 @@
+[{"model": "app_shop.goodcategory", "pk": 1, "fields": {"name": "Смартфоны", "active_goods": true}}, {"model": "app_shop.goodcategory", "pk": 2, "fields": {"name": "Ноутбуки", "active_goods": true}}]

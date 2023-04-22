@@ -5,11 +5,12 @@ from .views import MainPage, register_view, ShopLoginView, ShopLogoutView, ShopP
 
 from django.conf.urls.static import static
 from django.conf import settings
+from .views import OrdersDetailView, OrderDetailView
 
 urlpatterns = [
     # Main
     path('shop/main_page/', MainPage.as_view(), name='main_page'),
-    # path('shop/settings_api/', SettingsApiView.as_view(), name='settings_api'),
+    path('shop/settings_api/', SettingsApiView.as_view(), name='settings_api'),
 
     # Registration
     path('shop/register/', register_view, name='register'),
@@ -27,5 +28,7 @@ urlpatterns = [
 
     # Profile
     path('shop/user/<int:pk>/', PersonalDetailView.as_view(), name='personal'),
-    path('shop/user/profile/<int:pk>/', ProfileDetailView.as_view(), name='profile')
+    path('shop/user/profile/<int:pk>/', ProfileDetailView.as_view(), name='profile'),
+    path('shop/user/orders/<int:pk>/', OrdersDetailView.as_view(), name='orders'),
+    path('shop/user/<int:pk>/order/<int:order_id>/', OrderDetailView.as_view(), name='order')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

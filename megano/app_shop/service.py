@@ -1,4 +1,4 @@
-from .models import Review, UserProfile, User
+from app_shop.models import Review, UserProfile
 
 
 def ordering_catalog(ordering):
@@ -11,6 +11,8 @@ def ordering_catalog(ordering):
                 return '-reviews_num'
             elif ordering[1:] == 'release_year':
                 return '-good__release_year'
+            elif ordering[1:] == 'purchases_number':
+                return '-purchases_number'
         else:
             if ordering == 'price':
                 return 'price'
@@ -18,6 +20,8 @@ def ordering_catalog(ordering):
                 return 'reviews_num'
             elif ordering == 'release_year':
                 return 'good__release_year'
+            elif ordering == 'purchases_number':
+                return 'purchases_number'
     except AttributeError:
         return None
 

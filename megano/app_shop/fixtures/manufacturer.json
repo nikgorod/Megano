@@ -1,0 +1,1 @@
+[{"model": "app_shop.manufacturer", "pk": 1, "fields": {"name": "Xiaomi", "category": 1}}, {"model": "app_shop.manufacturer", "pk": 2, "fields": {"name": "Samsung", "category": 1}}]

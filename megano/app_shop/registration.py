@@ -3,7 +3,7 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, 
     PasswordResetDoneView, PasswordResetCompleteView
 from django.db import transaction
 from django.shortcuts import render, redirect
-from .models import UserProfile
+from app_shop.models import UserProfile
 from .forms import UserFormRegister, UserFormPassword
 
 
