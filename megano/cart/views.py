@@ -1,13 +1,11 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from django.views.decorators.http import require_POST
-from app_shop.models import Catalog, GoodCategory
-from .cart import Cart
-from .forms import CartAddProductForm
-from app_shop.forms import SearchForm
 from django.contrib import messages
-from payment.views import user_params
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+
+from app_shop.forms import SearchForm
+from app_shop.models import Catalog, GoodCategory
+
+from .cart import Cart
 
 
 def cart_add(request, product_id):

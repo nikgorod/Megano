@@ -1,0 +1,1 @@
+[{"model": "app_shop.dynamicsitesettings", "pk": 1, "fields": {"title": "Megano", "meta_content": "page_content", "cache_timeout": 300, "logo": "site_images/logo_HE2PHlN.png", "express_delivery_cost": 7, "delivery_cost": 3, "order_cost": 20}}]

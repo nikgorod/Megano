@@ -1,7 +1,7 @@
-from app_shop.models import Catalog
 import django_filters
 from django import forms
-from app_shop.models import Shop, Manufacturer, SpecificationValues
+
+from app_shop.models import Catalog, Manufacturer, Shop, SpecificationValues
 
 
 def price_filter(queryset, price, value):
@@ -16,7 +16,6 @@ def count_filter(queryset, count, value):
 
 class CatalogFilter(django_filters.FilterSet):
     """Фильтр для каталога"""
-
     CHOICES_SPECIFICATION = [(i_value.id, i_value)
                              for i_value in SpecificationValues.objects.all().order_by(
             'specification__name')]

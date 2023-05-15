@@ -1,11 +1,13 @@
-from django.urls import path
-from .views import MainPage, register_view, ShopLoginView, ShopLogoutView, ShopPasswordReset, ShopPasswordResetDone, \
-    ShopPasswordResetConfirm, ShopPasswordResetComplete, SettingsApiView, CatalogListView, CatalogDetailView, \
-    CatalogAllListView, PersonalDetailView, ProfileDetailView
-
-from django.conf.urls.static import static
 from django.conf import settings
-from .views import OrdersDetailView, OrderDetailView
+from django.conf.urls.static import static
+from django.urls import path
+
+from .views import (CatalogAllListView, CatalogDetailView, CatalogListView,
+                    MainPage, OrderDetailView, OrdersDetailView,
+                    PersonalDetailView, ProfileDetailView, SettingsApiView,
+                    ShopLoginView, ShopLogoutView, ShopPasswordReset,
+                    ShopPasswordResetComplete, ShopPasswordResetConfirm,
+                    ShopPasswordResetDone, register_view)
 
 urlpatterns = [
     # Main

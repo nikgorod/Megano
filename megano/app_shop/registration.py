@@ -1,10 +1,15 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetConfirmView, \
-    PasswordResetDoneView, PasswordResetCompleteView
+from django.contrib.auth.views import (LoginView, LogoutView,
+                                       PasswordResetCompleteView,
+                                       PasswordResetConfirmView,
+                                       PasswordResetDoneView,
+                                       PasswordResetView)
 from django.db import transaction
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
+
 from app_shop.models import UserProfile
-from .forms import UserFormRegister, UserFormPassword
+
+from .forms import UserFormPassword, UserFormRegister
 
 
 class ShopLoginView(LoginView):

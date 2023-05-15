@@ -1,6 +1,7 @@
-from django.contrib.auth.forms import UserCreationForm
-from app_shop.models import User, Review, UserProfile
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+
+from app_shop.models import Review, User, UserProfile
 
 
 class UserFormRegister(forms.Form):

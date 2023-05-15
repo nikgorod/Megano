@@ -1,14 +1,15 @@
 from celery.result import AsyncResult
-from django.db import transaction
-from django.shortcuts import render, redirect
-from app_shop.forms import SearchForm, UserFormRegister, UserFormPassword
-from app_shop.models import DynamicSiteSettings
-from cart.cart import Cart
-from .forms import PaymentParamsForm, PaymentForm
-from .models import Delivery, Payment, Order, OrdersToGoods
 from django.contrib import messages
+from django.db import transaction
+from django.shortcuts import redirect, render
+
+from app_shop.forms import SearchForm, UserFormPassword, UserFormRegister
+from app_shop.models import Catalog, DynamicSiteSettings
+from cart.cart import Cart
+
+from .forms import PaymentForm, PaymentParamsForm
+from .models import Delivery, Order, OrdersToGoods, Payment
 from .tasks import confirm_payment
-from app_shop.models import Catalog
 
 
 def get_delivery_price(total_cost, delivery_type):

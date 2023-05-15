@@ -1,6 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 
 class UserManager(BaseUserManager):
@@ -163,20 +163,6 @@ class Good(models.Model):
         indexes = [
             models.Index(fields=['category'])
         ]
-
-    def __str__(self):
-        return f'{self.name}'
-
-
-class GoodTags(models.Model):
-    """Модель тегов к товарам"""
-    name = models.CharField(max_length=30, verbose_name='название тега')
-    tags_to_good = models.ManyToManyField(Good, verbose_name='теги к товарам')
-
-    class Meta:
-        db_table = 'tags'
-        verbose_name = 'тег'
-        verbose_name_plural = 'теги'
 
     def __str__(self):
         return f'{self.name}'

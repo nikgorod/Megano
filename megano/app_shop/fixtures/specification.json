@@ -1,1 +1,1 @@
-[{"model": "app_shop.specification", "pk": 1, "fields": {"name": "Диагональ экрана", "category": 1}}, {"model": "app_shop.specification", "pk": 2, "fields": {"name": "Операционная система", "category": 1}}]
+[{"model": "app_shop.specification", "pk": 3, "fields": {"name": "Процессор", "category": 2}}, {"model": "app_shop.specification", "pk": 4, "fields": {"name": "Операционная система", "category": 1}}]

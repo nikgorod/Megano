@@ -76,21 +76,6 @@
               </div>
             </div>
             <div class="Section-columnSection">
-              <header class="Section-header">
-                <strong class="Section-title">Popular tags
-                </strong>
-              </header>
-              <div class="Section-columnContent">
-                <div class="buttons">
-                  <form method="get">
-                    {% csrf_token %}
-                    {% for i_tag in tags %}
-                      <input class="btn btn_default btn_sm" type="submit" value="{{i_tag}}">
-                    {% endfor %}
-                  </form>
-
-                </div>
-              </div>
             </div>
           </div>
         <div class="Section-content">

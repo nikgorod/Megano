@@ -1,9 +1,11 @@
 from django.contrib import admin
-from django.db.utils import ProgrammingError
-from app_shop.models import GoodCategory, UserProfile, Shop, User, Good, GoodTags, Catalog, CatalogImages, \
-    DynamicSiteSettings, \
-    Specification, Review, Manufacturer, SpecificationValues
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.db.utils import ProgrammingError
+
+from app_shop.models import (Catalog, CatalogImages, DynamicSiteSettings, Good,
+                             GoodCategory, Manufacturer, Review,
+                             Shop, Specification, SpecificationValues, User,
+                             UserProfile)
 
 
 @admin.register(Specification)
@@ -110,13 +112,6 @@ class CatalogImagesAdmin(admin.ModelAdmin):
     """Админ модель изображений каталога"""
     model = CatalogImages
     list_display = ['catalog']
-
-
-@admin.register(GoodTags)
-class GoodTagsAdmin(admin.ModelAdmin):
-    """Админ модель тегов"""
-    model = GoodTags
-    list_display = ['name']
 
 
 @admin.register(DynamicSiteSettings)

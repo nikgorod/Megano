@@ -1,8 +1,10 @@
 from django.db import models
-from app_shop.models import User, Catalog
+
+from app_shop.models import Catalog, User
 
 
 class Delivery(models.Model):
+    """МОдель доставки"""
     DELIVERY_CHOICES = (
         ('1', 'Обычная доставка'),
         ('2', 'Экспресс-доставка ')
@@ -22,12 +24,13 @@ class Delivery(models.Model):
 
 
 class Payment(models.Model):
+    """Модель способа оплаты"""
     PAYMENT_CHOICES = (
         ('1', 'Онлайн картой'),
         ('2', 'Онлайн со случайного чужого счёта'),
     )
     code = models.CharField(max_length=30, verbose_name='статус оплаты')
-    card_num = models.CharField(max_length=9    , verbose_name='номер карты')
+    card_num = models.CharField(max_length=9, verbose_name='номер карты')
     payment_type = models.CharField(verbose_name='способ оплаты', choices=PAYMENT_CHOICES, max_length=50)
 
     class Meta:
@@ -37,7 +40,9 @@ class Payment(models.Model):
     def __str__(self):
         return f'{self.code}'
 
+
 class Order(models.Model):
+    """Модель заказа"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь')
     date = models.DateTimeField(verbose_name='дата заказа', auto_now=True)
     amount = models.IntegerField(verbose_name='общая сумма заказа')
@@ -51,6 +56,7 @@ class Order(models.Model):
 
 
 class OrdersToGoods(models.Model):
+    """Заказы к товарам"""
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_to_good')
     good = models.ForeignKey(Catalog, on_delete=models.CASCADE, related_name='good_to_order')
     quantity = models.IntegerField(verbose_name='кол-во товара')

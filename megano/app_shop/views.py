@@ -1,28 +1,31 @@
+from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView, DetailView
-from rest_framework.views import APIView
-from .serializers import SiteSettingsSerializer
-from .models import GoodCategory, DynamicSiteSettings, Catalog, UserProfile
-from .registration import *
+from django.views.generic import DetailView, ListView
 from rest_framework.response import Response
-from .forms import ReviewForm, ProfileForm, SearchForm
-from .filter import *
-from django.contrib import messages
-from django.shortcuts import get_object_or_404
-from .service import AddReview, ProfileEdit, ordering_catalog
-from cart.forms import CartAddProductForm
+from rest_framework.views import APIView
+
 from cart.cart import Cart
+from cart.forms import CartAddProductForm
 from payment.models import Order
+
+from .filter import *
+from .forms import ProfileForm, ReviewForm, SearchForm
+from .models import Catalog, DynamicSiteSettings, GoodCategory, UserProfile
+from .registration import *
+from .serializers import SiteSettingsSerializer
+from .service import AddReview, ProfileEdit, ordering_catalog
 
 
 class SettingsApiView(APIView):
+    """API для настроек сайта"""
 
     def get(self, request):
         settings = DynamicSiteSettings.objects.get()
@@ -36,17 +39,22 @@ def site_settings(request):
 
 class MainPage(View):
     """Главная страница сайта"""
+
     def get(self, request):
         good_categories = GoodCategory.objects.prefetch_related('good').filter(active_goods=True)
         favorite_categories = good_categories[:3]
         try:
-            items = [Catalog.objects.select_related('good').prefetch_related('images').filter
-                         (good__category_id=i.id).order_by('price')[0] for i in favorite_categories]
+            items = [Catalog.objects.select_related('good').prefetch_related('images').\
+                     defer('count', 'purchases_number').filter
+                     (good__category_id=i.id).order_by('price')[0] for i in favorite_categories]
         except IndexError:
             items = []
-        limited_edition = Catalog.objects.select_related('shop', 'good').prefetch_related('images').filter(
+        limited_edition = Catalog.objects.select_related('shop', 'good').prefetch_related('images').\
+            defer('count', 'purchases_number').filter(
             limited_edition=True)[:16]
-        top_goods = Catalog.objects.select_related('shop', 'good').prefetch_related('images').all().order_by('-purchases_number')[:8]
+        top_goods = Catalog.objects.select_related('shop', 'good').prefetch_related('images').all(
+
+        ).order_by('-purchases_number')[:8]
         search_form = SearchForm()
         print(items)
         return render(request, 'app_shop/index.html', {'good_categories': good_categories,
@@ -163,13 +171,14 @@ class CatalogListView(ListView):
         context = super(CatalogListView, self).get_context_data(**kwargs)
         context['category_id'] = self.kwargs['category_id']
         ordering = ordering_catalog(self.request.GET.get('ordering'))
-        print(ordering)
         if ordering:
-            context['filter'] = CatalogFilter(self.request.GET, queryset=Catalog.objects.select_related('good').prefetch_related(
+            context['filter'] = CatalogFilter(self.request.GET, queryset=Catalog.objects.select_related('good').
+                                              prefetch_related(
                 'images').filter(
                 good__category_id=self.kwargs['category_id']).annotate(reviews_num=Count('reviews')).order_by(ordering))
         else:
-            context['filter'] = CatalogFilter(self.request.GET, queryset=Catalog.objects.select_related('good').prefetch_related(
+            context['filter'] = CatalogFilter(self.request.GET, queryset=Catalog.objects.select_related('good').
+                                              prefetch_related(
                 'images').filter(
                 good__category_id=self.kwargs['category_id']))
         paginator = Paginator(context['filter'].qs, 3)
@@ -213,12 +222,13 @@ class CatalogAllListView(ListView):
         ordering = ordering_catalog(self.request.GET.get('ordering'))
         if ordering:
             context['filter'] = CatalogFilter(self.request.GET,
-                                          queryset=Catalog.objects.select_related('good').prefetch_related(
-                                              'images').all().annotate(reviews_num=Count('reviews')).order_by(ordering))
+                                              queryset=Catalog.objects.select_related('good').prefetch_related(
+                                                  'images').all().annotate(reviews_num=Count('reviews')).order_by(
+                                                  ordering))
         elif search is not True:
             context['filter'] = CatalogFilter(self.request.GET,
-                                          queryset=Catalog.objects.select_related('good').prefetch_related(
-                                              'images').all())
+                                              queryset=Catalog.objects.select_related('good').prefetch_related(
+                                                  'images').all())
 
         paginator = Paginator(context['filter'].qs, 3)
         page_number = self.request.GET.get('page')
